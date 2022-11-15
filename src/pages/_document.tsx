@@ -11,6 +11,7 @@ export default function Document() {
         <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssText() }} />
       </Head>
       <body>
+        <title>NG-Cash</title>
         <Main />
         <NextScript />
       </body>

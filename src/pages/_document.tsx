@@ -12,6 +12,7 @@ export default function Document() {
       </Head>
       <body>
         <title>NG-Cash</title>
+
         <Main />
         <NextScript />
       </body>

@@ -27,8 +27,6 @@ export const LoginContainer = styled("div", {
       width: "100%",
       fontSize: "18px",
       fontWeight: "bold",
-      
-      
     }
   }
 

@@ -20,7 +20,16 @@ export const SingUpContainer = styled("div", {
       marginBottom: "10px",
       width: "100%",
       fontSize: "18px",
-      fontWeight: "bold"
+      fontWeight: "bold",
+      backgroundColor: "black",
+      color: "#FFF",
+      border: "1px black",
+
+      transition: "background-color .1s",
+
+      "&:hover": {
+        backgroundColor: "#000D",
+      }
     }
   }
 });
@@ -30,7 +39,7 @@ export const Input = styled("input", {
   padding: "4px 0",
   
   paddingLeft: "8px",
-  
+
   width: "400px",
   margin: "10px 0",
   border: "none",

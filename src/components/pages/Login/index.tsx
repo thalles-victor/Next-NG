@@ -1,6 +1,7 @@
+import Router from "next/router"
 import { LoginContainer } from "./styles";
 import { useForm } from "react-hook-form"
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 
 type LoginRequest = {
@@ -9,7 +10,11 @@ type LoginRequest = {
 }
 
 export function Login() {
+  const [authError, setAuthError] = useState(false);
+
   const { register, handleSubmit } = useForm<LoginRequest>();
+
+
   const {
     signIn,
     isAuthenticated,
@@ -18,9 +23,12 @@ export function Login() {
 
 
   async function handleSingIn(data: LoginRequest) {
-    await signIn(data);
-  }
+    setAuthError(await signIn(data));
 
+    if (!authError) {
+      Router.push("/dashboard")
+    }
+  }
 
   return(
     <LoginContainer>
@@ -31,6 +39,9 @@ export function Login() {
             placeholder="user name"
             {...register("userName")}
           />
+          {
+            authError? <span>Senha ou usuário inválido</span> : null
+          }
           <input
             placeholder="Senha" 
             type="password"
@@ -39,8 +50,9 @@ export function Login() {
           <button type="submit">Entrar</button>
         </form>
 
-        <button>recuperar senha</button>
-        <button>Crirar conta</button>
+        <button onClick={() => {
+          Router.push("/criar-conta")
+        }}>Crirar conta</button>
       </div>
     </LoginContainer>
   )

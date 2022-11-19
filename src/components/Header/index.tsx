@@ -1,9 +1,29 @@
+import Router from "next/router"
 import Img from "next/image";
+import { destroyCookie } from "nookies"
+
 import { HeaderContainer, ProfileContainer,  ProfileIcon, SignOutIcon } from "./styles";
 import Logo from "../../assets/NGLogo.svg"
 
+import { AuthContext } from "../../contexts/AuthContext";
+import { useContext } from "react";
+
 
 export function Header() {
+  const { isAuthenticated } = useContext(AuthContext);
+
+  function handleCheckIsIstAuthenticatio() {
+    if (!isAuthenticated) {
+      Router.push("/login")
+    }
+  }
+
+  async function handleLogout() {
+    destroyCookie(null, "gncashauth_token")
+    Router.push("/login")
+
+  }
+
   return(
     <HeaderContainer>
       <Img
@@ -11,11 +31,18 @@ export function Header() {
         width={100}
         height={100}
         alt=""
+        onClick={() => {
+          Router.push("/")
+        }}
       />
 
       <ProfileContainer>
-        <ProfileIcon size={32}/>
-        <SignOutIcon size={32}/>
+        <ProfileIcon size={32} onClick={() =>{
+          handleCheckIsIstAuthenticatio()      
+        }}/>
+        <SignOutIcon size={32} onClick={() => {
+          handleLogout()
+        }}/>
       </ProfileContainer>
 
     </HeaderContainer>

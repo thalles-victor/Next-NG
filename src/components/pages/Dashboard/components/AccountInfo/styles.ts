@@ -22,9 +22,8 @@ export const Content = styled("div", {
 })
 
 export const Avatar = styled(Img, {
-  
   borderRadius: "50%",
-  border: "2px solid"
+  border: "2px solid black"
 });
 
 export const Footer = styled("div", {

@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  ngfrontend:
+    build: .
+    container_name: ngfrontend
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/user/app
+  

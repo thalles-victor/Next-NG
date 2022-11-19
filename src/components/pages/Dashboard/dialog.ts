@@ -17,6 +17,7 @@ export const DialogOverlay = styled(Dialog.Overlay, {
 export const DialogContent = styled(Dialog.Content, {
   minWidth: "300px",
   background: "white",
+  color: "$black",
   padding: "30px",
   borderRadius: "4px",
   position: "fixed",

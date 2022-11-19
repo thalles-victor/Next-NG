@@ -23,8 +23,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  apiClient.get("/users")
-
   return {
     props: {}
   }

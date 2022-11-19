@@ -15,7 +15,11 @@ export const {
 } = createStitches({
   theme: {
     colors: {
-      withe: "#fff"
+      white: "#fff",
+      "bg": "#151515",
+      "black-600": "#252525",
+      "black-900": "#151515",
+      "black": "#000",
     }
   },
   media: {

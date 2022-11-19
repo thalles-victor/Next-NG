@@ -1,5 +1,6 @@
-import * as Dialog from "@radix-ui/react-dialog";
 import Img from "next/image"
+import { createContext } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 import {
   DashboardContainer,
@@ -14,7 +15,6 @@ import {
   DialogTitle,
   DialogDescription,
   ExitButton,
-
 } from "./dialog";
 
 import { FormComponent } from "./components/Form";
@@ -23,21 +23,56 @@ import { useContext, useEffect, useState } from "react";
 import { History } from "./components/History";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { api } from "../../../services/api";
+import { TransactionProvider } from "./TransactionProvider";
 
-type TransactionState = "form" | "account"
+type TransactionState = "form" | "account" | "confirmed";
+import { priceFormatter } from "../../../utils/formatter"
+
+interface TargetUserProps {
+  name: string;
+  userName: string;
+  avatar: string;
+}
+
+
+interface TransactionDataProps {
+  targetUser: TargetUserProps | null;
+  value: number;
+  handleSetTargetUser: (targetUser: TargetUserProps) => void;
+  handleSetValue: (value: number)  => void;
+}
 
 
 export function Dashboard() {
-
+  const [targetUser, setTargetUser] = useState<TargetUserProps | null>(null);
+  const [value, setValue] = useState<number>(0);
+  
+  const [balance, setBalance] = useState<number>();
   const [transactionState, setTransactionState] = useState<TransactionState>("form")
   
   const {
     user
   } = useContext(AuthContext);
 
+  async function getBalance() {
+    await api.get("/user/balance").then(response => {
+      const data = response.data;
+
+      setBalance(data.balance);
+    })
+  }
+
   useEffect(() => {
-    api.get("/users");
-  }, [])
+    getBalance()
+  }, [transactionState])
+
+  function handleSetTargetUser(targetUser: TargetUserProps) {
+    setTargetUser(targetUser)
+  }
+
+  function handleSetValue(value: number) {
+    setValue(value)
+  }
 
 
   function handleNextToAccountInfo() {
@@ -48,25 +83,24 @@ export function Dashboard() {
     setTransactionState("form")
   }
 
+  function handleConfirmTransaction() {
+    setTransactionState("confirmed")
+  }
+
   return(
     <DashboardContainer>
       <Content>
-        <h1>${user?.userName}</h1>
-
-        {
-          user?.avatar? 
-          <Img
-            alt=""
-            width={300}
-            height={300}
-            src={user?.avatar}
-          /> : null
-        }
-
         <InfoTransactionContainer>
           <BalanceContainer>
-            <h1>R$ 100,00</h1>
-            <span> saldo em conta</span>
+            <h1>
+              {
+                balance?
+                  priceFormatter.format(balance)
+                  :
+                  "carregando..."
+              }
+            </h1>
+            <p>saldo</p>
           </BalanceContainer>
 
           <Dialog.Root>
@@ -83,12 +117,18 @@ export function Dashboard() {
               <DialogDescription>
                 Tenha certeza que os dados estão corretos ao realizar a transação
               </DialogDescription>
-
+              <TransactionProvider>
               {
-               transactionState === "account"? <AccountInformation handleBack={handleBackToForm} /> :  <FormComponent handleNext={handleNextToAccountInfo}/> 
+               transactionState === "account"?
+                <AccountInformation
+                  handleBack={handleBackToForm}
+                  handleConfirm={handleConfirmTransaction}/>
+                :
+                <FormComponent
+                  handleNext={handleNextToAccountInfo}
+                /> 
               }
-              
-
+              </TransactionProvider>
             </DialogContent>
           </Dialog.Portal>
           </Dialog.Root>
@@ -101,4 +141,3 @@ export function Dashboard() {
     </DashboardContainer>
   );
 }
-

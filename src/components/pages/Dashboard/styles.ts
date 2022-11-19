@@ -29,25 +29,25 @@ export const InfoTransactionContainer = styled("div", {
   button: {
     alignSelf: "flex-start",
     padding: "5px 10px",
-    fontSize: "20px",
+    fontSize: "24px",
     fontWeight: "bold",
 
-    border: "1px solid black",
-    borderRadius: "px",
-    backgroundColor: "white",
+    border: "2px solid white",
+    borderRadius: "20px",
+    backgroundColor: "$black-900",
+    color: "$white",
 
     transition: "background-color .1s, color .1s",
 
     "&:hover": {
-      backgroundColor: "black",
-      color: "white"
+      backgroundColor: "$white",
+      color: "$black"
     }
-    
   }
 })
 
 export const BalanceContainer = styled("div", {
-  border: "1px solid black",
+  border: "2px solid white",
   padding: "10px 20px",
   borderRadius: "8px",
   margin: "-8px 0",

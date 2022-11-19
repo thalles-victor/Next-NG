@@ -7,9 +7,13 @@ export const HeaderContainer = styled("div", {
   alignItems: "center",
   justifyContent: "center",
   flexDirection: "row",
+  backgroundColor: "black",
 
-  
-  backgroundColor: "Black",
+  img: {
+    "&:hover": {
+      cursor: "pointer"
+    }
+  }
 });
 
 export const ProfileContainer = styled("div", {
@@ -26,8 +30,18 @@ export const ProfileContainer = styled("div", {
   }
 })
 
-export const ProfileIcon = styled(UserCircle, {})
+export const ProfileIcon = styled(UserCircle, {
+  "&:hover": {
+    cursor: "pointer"
+  },
+
+  transition: "color .1s"
+})
 
 export const SignOutIcon = styled(SignOut, {
   paddingLeft: "20px",
+  transition: "color .1s",
+  "&:hover": {
+    cursor: "pointer"
+  }
 })

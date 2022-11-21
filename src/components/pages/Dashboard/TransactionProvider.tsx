@@ -1,6 +1,16 @@
 import { createContext, ReactNode, useState } from "react";
 import { api } from "../../../services/api";
 
+export interface TransactionsProps {
+  id_pk: string;
+  createdAt: Date;
+  debitedAccountId: string;
+  creditedAccountId: string;
+  accountId_pk: string | null;
+  value: number;
+}
+
+
 interface TransactionInfoProps {
   targetName: string;
   value: number;
@@ -15,6 +25,9 @@ interface UserForExecuteTransactionProps {
 interface TransactionContextProps {
   transactionInfo: TransactionInfoProps;
   userForExecuteTransaction: UserForExecuteTransactionProps | null;
+  transactions: TransactionsProps[] | null;
+  // fethTransactions: (q: string) => Promise<void>;
+  registerTransactions: (transactions: TransactionsProps[]) => void
   getUserForTransaction: (targetName: string)  => Promise<void>
   handleSetTransactionInfo: (transactionInfo: TransactionInfoProps) => void;
 }
@@ -32,12 +45,32 @@ export function TransactionProvider(
   });
 
   const [userForExecuteTransaction, setUserForExecuteTransaction] = useState<UserForExecuteTransactionProps | null>(null)
+  const [transactions, setTransactions] = useState<TransactionsProps[] | null>(null);
 
   function handleSetTransactionInfo({ targetName, value }: TransactionInfoProps) {
     setTransactionInfo({
       targetName,
       value
     })
+  }
+
+  // async function fethTransactions(query?: string) {
+  //   const listOfTransactins = await api({
+  //     method: "GET",
+  //     url: `/user/transactions/${query}`,
+  //   }).then(response => {
+  //     return response.data.transactions;
+      
+  //   }).catch(error => {
+  //     console.log("Error while fetch transactons: ", error)
+  //   })
+
+  //   if (listOfTransactins)  setTransactions(listOfTransactins)
+
+  // }
+
+  function registerTransactions(transactions: TransactionsProps[]) {
+    setTransactions(transactions)
   }
 
   async function getUserForTransaction(targetName: string) {
@@ -55,7 +88,7 @@ export function TransactionProvider(
   }
   
   return(
-    <TransactionContext.Provider value={ { transactionInfo, handleSetTransactionInfo, userForExecuteTransaction, getUserForTransaction } }>
+    <TransactionContext.Provider value={ {transactionInfo, handleSetTransactionInfo, userForExecuteTransaction, registerTransactions, getUserForTransaction, transactions,  } }>
       { children }
     </TransactionContext.Provider>
   );

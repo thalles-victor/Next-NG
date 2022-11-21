@@ -2,9 +2,11 @@
 import Img from "next/image";
 import { useForm } from "react-hook-form";
 import React, { useContext, useState } from "react";
-import { Camera } from "phosphor-react"
+import { Camera } from "phosphor-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as zod from "zod";
 
-import { CatchphraseContainer, ChecksIcon, Input, SelectAvatarField, InputAvatar, SingUpContainer } from "./styles";
+import { CatchphraseContainer, ChecksIcon, Input, SelectAvatarField, LabelImageFiled, InputAvatar, SingUpContainer } from "./styles";
 import { api } from "../../../services/api";
 import { toBase64 } from "./toBase64";
 import { singUpRequest } from "../../../services/auth";
@@ -17,29 +19,47 @@ type Inputs = {
   avatar: FileList
 }
 
+
+
+const MAX_FILE_SIZE = 500000;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+const registerFormValidationSchema = zod.object({
+  name: zod.string().min(10, "O nome deve ter no mínimo 10 caracteres"),
+  userName: zod.string().min(3, "o apelido não pode ter menos que 3 caracteres"),
+  password: zod.string().min(8, "a senha deve conter no mínimo 8 caracteres"),
+  avatar: zod
+    .any()
+    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      "Somente formatos .jpg, .jpeg, .png and .webp são suportados."
+    )
+})
+
 interface UserValidAPI {
   exist: boolean
 }
 
 export function SingUp() {
-  const { register, handleSubmit, watch } = useForm<Inputs>();
   const [validNickName, setValidNickName]= useState<boolean>(false);
   const [avatarBase64, setAvatar64] = useState<string | null>(null);
 
+  const { register, handleSubmit, watch, formState } = useForm<Inputs>({
+    resolver: zodResolver(registerFormValidationSchema)
+  });
+
+
+
   const { signUp } = useContext(AuthContext);
+  console.log("Avtar erorr: ", formState.errors.avatar?.message)
 
-  watch(({ userName, avatar }) => {
-    if (userName && userName !== "") {
-      handleVerifyIfNameIsValid(userName)
-    } if (userName === "" || userName === undefined) {
-      setValidNickName(false)
-    }
+  watch((data) => {
+    const { avatar } = data;
 
-    if (avatar) {
-      const file = avatar;
-
-      if (file.length > 0) {
-        const getFile = file[0];
+    if (avatar && !formState.errors.avatar) {
+      if (avatar.length > 0) {
+        const getFile = avatar[0];
         toBase64(getFile).then(
           (fileBase64) => setAvatar64((fileBase64) as string)
         )
@@ -47,15 +67,16 @@ export function SingUp() {
     }
   })
 
-
-
   async function handleSingUp({
     name,
     userName,
     password,
+    avatar
   }: Inputs) {
-    console.log(userName)
-    if (avatarBase64){
+
+    
+
+    if (avatarBase64) {
       await signUp({
         name,
         userName,
@@ -66,11 +87,11 @@ export function SingUp() {
   }
 
 
+
   async function handleVerifyIfNameIsValid(userName: string) {
     await api.get(`/user/exist/${userName}`)
       .then(response => {
-        const { exist } = (response.data) as UserValidAPI;
-        
+        const { exist } = (response.data) as UserValidAPI
         setValidNickName(!exist)
       })
   }
@@ -78,21 +99,56 @@ export function SingUp() {
 
   return(
     <SingUpContainer>
-{/* 
-      <h1>NG-Cash</h1>
-
-      <CatchphraseContainer>
-          <p>O mundo precisa de mais facilidade</p>
-          <p>E é o que vamos lhe trazer</p>
-      </CatchphraseContainer> */}
-
       <div>
         <h1>Criar conta</h1>
-        <form onSubmit={handleSubmit(handleSingUp)}>
+        <form onSubmit={handleSubmit(handleSingUp, watch)}>
+          <SelectAvatarField>
+            {  !avatarBase64? <LabelImageFiled animation={"animation"}>
+                { 
+                  <>
+                    <span>Selecionar Avatar</span>
+                    <InputAvatar
+                      placeholder="Avatar"
+                      type="file"
+                      {...register("avatar", { required: true })}
+                      />
+                      <Camera size={32}/>
+
+                  </>
+                }
+                
+          
+                </LabelImageFiled>
+                : 
+                <LabelImageFiled animation={"noAnimation"}>
+                
+                
+                <InputAvatar
+                      placeholder="Avatar"
+                      type="file"
+                      {...register("avatar", { required: true })}
+                      />
+                  <Img
+                    alt="avatar"
+                    src={avatarBase64}
+                    width={120}
+                    height={120}
+                  />
+                  {
+                    formState.errors.avatar? <span>{formState.errors.avatar.message}</span> : null
+                  }        
+                </LabelImageFiled>
+            }
+              
+            </SelectAvatarField>
+
           <Input
             placeholder="Nome"
             {...register("name")}
           />
+          {
+            formState.errors.name? <span>{formState.errors.name.message}</span> : null
+          }
           <div>
             <Input
               placeholder="@ nome de usuário"
@@ -100,34 +156,19 @@ export function SingUp() {
             />
             <ChecksIcon size={30} color={ validNickName? "able" : "disable" } />
           </div>
+          {
+            formState.errors.userName? <span>{formState.errors.userName.message}</span> : null
+          }
       
           <Input
             placeholder="senha"
             type="password"
             {...register("password")}
           />
-          <SelectAvatarField>
-            <label>
-              <span>Selecionar Avatar</span>
-             
-              <InputAvatar
-                placeholder="Avatar"
-                type="file"
-                {...register("avatar", { required: true })}
-                />
-                <Camera size={32}/>
-                {
-          avatarBase64?
-          <Img
-            alt="avatar"
-            src={avatarBase64}
-            width={120}
-            height={120}
-          /> : null
-        }
-              </label>
-              
-            </SelectAvatarField>
+          {
+            formState.errors.password? <span>{formState.errors.password.message}</span> : null
+          }
+          
 
 
           <button

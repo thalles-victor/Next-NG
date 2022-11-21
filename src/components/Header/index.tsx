@@ -37,12 +37,16 @@ export function Header() {
       />
 
       <ProfileContainer>
-        <ProfileIcon size={32} onClick={() =>{
-          handleCheckIsIstAuthenticatio()      
-        }}/>
-        <SignOutIcon size={32} onClick={() => {
-          handleLogout()
-        }}/>
+        <ProfileIcon
+          alt="usuário"
+          size={32} onClick={() =>{
+            handleCheckIsIstAuthenticatio()      
+          }}/>
+        <SignOutIcon size={32}
+          alt="sair"
+          onClick={() => {
+            handleLogout()
+          }}/>
       </ProfileContainer>
 
     </HeaderContainer>

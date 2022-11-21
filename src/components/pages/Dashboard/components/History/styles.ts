@@ -4,6 +4,8 @@ export const HistoryContainer = styled("div", {
   display: "flex",
   flexDirection: "column",
   flex: 1,
+  
+  
   // padding: "40px 70px",
 
   border: "1px solid black",
@@ -14,7 +16,7 @@ export const HistoryContainer = styled("div", {
 export const HistoryList = styled("div", {
   flex: 1,
   overflow: "auto",
-  marginTop: "2rem"
+  // marginTop: "2rem"
 })
 
 export const Table = styled("table", {

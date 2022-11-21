@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowLeft, ArrowRight } from "phosphor-react";
 import { useContext } from "react";
+import { AuthContext } from "../../../../../contexts/AuthContext";
 
 import { api } from "../../../../../services/api";
 import { TransactionContext } from "../../TransactionProvider";
@@ -12,22 +13,28 @@ import { AccountContainer, Avatar, Content, Footer } from "./styles";
 interface AccountProps {
   handleBack: () => void;
   handleConfirm: () => void;
+  balance: number | null;
 }
 
 
-export function AccountInformation({ handleBack, handleConfirm }: AccountProps) {
+export function AccountInformation({ handleBack, handleConfirm, balance }: AccountProps) {
   const { transactionInfo: { targetName, value }, getUserForTransaction, userForExecuteTransaction: userForTransection } = useContext(TransactionContext);
+
   function handleBackToForm() {
     handleBack()
   }
   getUserForTransaction(targetName);
 
-  async function handleGetUserForTransaction() {
-    
-  }
 
   async function createTransaction() {
-    const data = await api({
+    if (!balance) return
+
+    if (! (balance >= value)) {
+      alert("value invalid")
+      return
+    }
+
+    await api({
       url: "/user/transaction",
       method: "post",
       data: {
@@ -39,6 +46,7 @@ export function AccountInformation({ handleBack, handleConfirm }: AccountProps) 
     }).then(response => {
       return response.data;
     }).catch(error => {
+      const data = error.data;
       console.log(error)
     })
 

@@ -1,5 +1,23 @@
 import { Checks } from "phosphor-react";
-import { styled } from "../../../styles";
+import { keyframes, styled } from "../../../styles";
+
+const showAnimation = keyframes({
+  from: {
+    opacity: .4,
+    transform: "translate(10px, 0px)"
+  }, to: {
+    opacity: 1,
+    transform: "translate(0px, 0px)"
+  }
+})
+
+const showAll = keyframes({
+  from: {
+    opacity: .4,
+  }, to: {
+    opacity: 1,
+  }
+})
 
 export const SingUpContainer = styled("div", {
   display: "flex",
@@ -9,8 +27,15 @@ export const SingUpContainer = styled("div", {
   height: "70vh",
   backgroundColor: "$bg",
 
+  "*": {
+    animation: `${showAll} 1s`
+  },
+
   h1: {
-    color: "$white"
+    color: "$white",
+    marginBottom: "40px",
+    animation: `${showAnimation} 1s`
+    
   },
 
   
@@ -22,26 +47,39 @@ export const SingUpContainer = styled("div", {
     width: "100%",
 
     button: {
-      padding: "10px 0",
-      marginBottom: "10px",
+      padding: "8px 0",
+      marginTop: "20px",
       width: "100%",
       fontSize: "18px",
       fontWeight: "bold",
-      backgroundColor: "$white",
-      color: "$black",
-      border: "2px solid transparent",
-      borderRadius: "20px",
 
-      transition: "background-color .250s, color .250s, border-color .250s",
+      backgroundColor: "transparent",
+      color: "$white",
+
+      border: "2px solid white",
+      borderRadius: "8px",
+
+      transition: "background-color .25s, color .25s, border-color .25s",
 
       "&:hover": {
-        backgroundColor: "$black-900",
-        color: "$white",
-        border: "2px solid white"
+        backgroundColor: "$white",
+        color: "$black",
+        transform: "translate(0px, -3px)",
+        boxShadow: "2px 3px 10px white",
+        borderColor: "$balck"
       }
     }
   }
 });
+
+const colorRotate = keyframes({
+  "0%":  {
+    opacity: .5
+    
+  }, "100%" : {
+      opacity: 1,
+  }
+})
 
 export const SelectAvatarField = styled("div", {
   display: "flex",
@@ -50,27 +88,48 @@ export const SelectAvatarField = styled("div", {
   justifyContent: "center",
   alignContent: "center",
 
-  color: "$white",
-    
-  label: {
-    marginTop: "10px",
-    marginBottom: "10px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "column",
-    "&:hover": {
-      cursor: "pointer"
-    },
+  marginBottom: "20px",
 
-    img: {
-      borderRadius: "50%"
-    }
+  
+
+})
+
+export const LabelImageFiled = styled("label", {
+  marginTop: "10px",
+  marginBottom: "10px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexDirection: "column",
+  
+  
+  "&:hover": {
+    cursor: "pointer"
   },
+  
+  span: {
+    fontSize: "20px"
+  },
+
+  img: {
+    borderRadius: "50%",
+    border: "2px solid white",
+  },
+
+  variants: {
+    animation: {
+      animation: {
+        animation: `${colorRotate} 1s 1s infinite alternate`,
+      },
+      noAnimation: {
+        animation: `none`,
+      }
+    }
+  }
 })
 
 export const Input = styled("input", {
-  fontSize: "1.25rem",
+  fontSize: "20px",
   padding: "4px 0",
   paddingLeft: "8px",
   width: "400px",
@@ -88,6 +147,7 @@ export const InputAvatar = styled("input", {
 });
 
 export const ChecksIcon = styled(Checks, {
+  position: "absolute",
   variants: {
     color: {
       able: {

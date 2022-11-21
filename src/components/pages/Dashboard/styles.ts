@@ -1,10 +1,25 @@
 import { styled } from "@stitches/react";
+import { keyframes } from "../../../styles";
+import { showAll } from "../../../styles/animations";
+
+const moveTopAnimation = keyframes({
+  from: {
+    opacity: 0.4,
+    transform: "translate(0px, 10px)"
+  }, to: {
+    opacity: 1,
+    transform: "translate(0px, 0px)"
+  }
+})
 
 export const DashboardContainer = styled("div", {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  flexDirection: "column"
+  flexDirection: "column",
+  "*": {
+    animation: `${showAll} 1s`
+  }
 })
 
 export const Content = styled("div", {
@@ -14,8 +29,6 @@ export const Content = styled("div", {
     alignSelf: "flex-start"
   }
 });
-
-
 
 export const InfoTransactionContainer = styled("div", {
   display: "flex",
@@ -51,6 +64,8 @@ export const BalanceContainer = styled("div", {
   padding: "10px 20px",
   borderRadius: "8px",
   margin: "-8px 0",
+  animation: `${moveTopAnimation} 1s`,
+  boxShadow: "2px 2px 20px white"
   
 })
 

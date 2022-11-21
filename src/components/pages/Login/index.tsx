@@ -1,18 +1,27 @@
 import Router from "next/router"
-import { LoginContainer } from "./styles";
+import { LoginContainer, InputForm, ButtonSubmit } from "./styles";
 import { useForm } from "react-hook-form"
 import { useContext, useState } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as zod from "zod";
 
 type LoginRequest = {
   userName: string;
   password: string;
 }
 
+const loginFormValidationSchema = zod.object({
+  userName: zod.string().min(3, "usuário não pode ter menos que 3 caracteres"),
+  password: zod.string().min(8, "a senha deve conter no mínimo 8 caracteres")
+})
+
 export function Login() {
   const [authError, setAuthError] = useState(false);
 
-  const { register, handleSubmit } = useForm<LoginRequest>();
+  const { register, handleSubmit, formState } = useForm<LoginRequest>({
+    resolver: zodResolver(loginFormValidationSchema)
+  });
 
 
   const {
@@ -33,26 +42,36 @@ export function Login() {
   return(
     <LoginContainer>
       <div>
-        <h1>Entrar</h1>
+        <h1>Login</h1>
         <form onSubmit={handleSubmit(handleSingIn)}>
-          <input
+          <InputForm
             placeholder="user name"
             {...register("userName")}
           />
           {
-            authError? <span>Senha ou usuário inválido</span> : null
+            formState.errors.userName? <span>{formState.errors.userName.message}</span> : null
           }
-          <input
+          <InputForm
             placeholder="Senha" 
             type="password"
             {...register("password")}
           />
-          <button type="submit">Entrar</button>
+          {
+            formState.errors.password? <span>{formState.errors.password?.message}</span> : null
+          }
+          <ButtonSubmit
+            type="submit"
+          >
+            Entrar
+          </ButtonSubmit>
         </form>
 
-        <button onClick={() => {
-          Router.push("/criar-conta")
-        }}>Crirar conta</button>
+        <h3>
+          Não tem conta ainda 🤔?Então vamos
+          <a onClick={() => {
+            Router.push("/criar-conta")
+          }}> criar uma 😃</a>
+        </h3>
       </div>
     </LoginContainer>
   )

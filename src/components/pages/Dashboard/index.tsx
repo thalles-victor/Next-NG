@@ -23,7 +23,7 @@ import { useContext, useEffect, useState } from "react";
 import { History } from "./components/History";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { api } from "../../../services/api";
-import { TransactionProvider } from "./TransactionProvider";
+import { TransactionContext, TransactionProvider } from "./TransactionProvider";
 
 type TransactionState = "form" | "account" | "confirmed";
 import { priceFormatter } from "../../../utils/formatter"
@@ -43,16 +43,20 @@ interface TransactionDataProps {
 }
 
 
+
 export function Dashboard() {
   const [targetUser, setTargetUser] = useState<TargetUserProps | null>(null);
   const [value, setValue] = useState<number>(0);
   
   const [balance, setBalance] = useState<number>();
-  const [transactionState, setTransactionState] = useState<TransactionState>("form")
-  
+  const [transactionState, setTransactionState] = useState<TransactionState>("form");
+
+  const { fethTransactions, transactions } = useContext(TransactionContext);
+
   const {
     user
   } = useContext(AuthContext);
+
 
   async function getBalance() {
     await api.get("/user/balance").then(response => {
@@ -61,10 +65,6 @@ export function Dashboard() {
       setBalance(data.balance);
     })
   }
-
-  useEffect(() => {
-    getBalance()
-  }, [transactionState])
 
   function handleSetTargetUser(targetUser: TargetUserProps) {
     setTargetUser(targetUser)
@@ -86,6 +86,12 @@ export function Dashboard() {
   function handleConfirmTransaction() {
     setTransactionState("confirmed")
   }
+
+  fethTransactions
+
+  useEffect(() => {
+    getBalance()
+  }, [])
 
   return(
     <DashboardContainer>
@@ -121,6 +127,7 @@ export function Dashboard() {
               {
                transactionState === "account"?
                 <AccountInformation
+                  balance={balance}
                   handleBack={handleBackToForm}
                   handleConfirm={handleConfirmTransaction}/>
                 :
@@ -136,7 +143,7 @@ export function Dashboard() {
         </InfoTransactionContainer>
 
 
-        <History />
+        <History/>
       </Content>
     </DashboardContainer>
   );
